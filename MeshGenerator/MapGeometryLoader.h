@@ -4,6 +4,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4018)
 
+#include "ModelEntry.h"
 #include "zone-utilities/common/s3d_loader.h"
 #include "zone-utilities/common/eqg_loader.h"
 #include "zone-utilities/common/eqg_v4_loader.h"
@@ -77,22 +78,6 @@ private:
 	int m_dynamicObjects = 0;
 	bool m_hasDynamicObjects = false;
 
-	struct ModelEntry
-	{
-	public:
-		struct Poly
-		{
-			union {
-				struct {
-					uint32_t v1, v2, v3;
-				};
-				uint32_t v[3];
-			};
-			uint8_t vis;
-		};
-		std::vector<glm::vec3> verts;
-		std::vector<Poly> polys;
-	};
 	std::map<std::string, std::shared_ptr<ModelEntry>> m_models;
 
 

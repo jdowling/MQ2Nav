@@ -15,6 +15,7 @@
     <ClCompile Include="ChunkyTriMesh.cpp" />
     <ClCompile Include="ConvexVolumeTool.cpp" />
     <ClCompile Include="CrowdTool.cpp" />
+    <ClCompile Include="CustomModel.cpp" />
     <ClCompile Include="EQConfig.cpp" />
     <ClCompile Include="imgui_impl_sdl.cpp" />
     <ClCompile Include="Interface.cpp" />
@@ -39,7 +40,9 @@
     <ClInclude Include="ChunkyTriMesh.h" />
     <ClInclude Include="ConvexVolumeTool.h" />
     <ClInclude Include="CrowdTool.h" />
+    <ClInclude Include="CustomModel.h" />
     <ClInclude Include="EQConfig.h" />
+    <ClInclude Include="ModelEntry.h" />
     <ClInclude Include="imgui_impl_sdl.h" />
     <ClInclude Include="InputGeom.h" />
     <ClInclude Include="Interface.h" />

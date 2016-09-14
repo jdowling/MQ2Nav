@@ -3,6 +3,7 @@
 #include "MapGeometryLoader.h"
 
 #include "../ZoneData.h"
+#include "CustomModel.h"
 
 #include "zone-utilities/log/log_macros.h"
 #include "zone-utilities/common/compression.h"
@@ -17,6 +18,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#include <windows.h> // DEBUG
+#include <boost/unordered_set.hpp>
 
 static inline void RotateVertex(glm::vec3& v, float rx, float ry, float rz)
 {
@@ -310,21 +314,60 @@ bool MapGeometryLoader::load()
 		}
 	}
 
+	char s[256]; // DEBUG
+	int gCount = 0; // DEBUG
+	int pCount = 0; // DEBUG
+
+	boost::unordered_set<std::string> skip;
+	skip.emplace("obp_fern_full");
+
 	for (const auto& group : map_group_placeables)
 	{
+		pCount = 0;
+		//sprintf(s, "GROUP[%i]:\n", gCount);
+		//OutputDebugString(s);
+
 		for (const auto& obj : group->GetPlaceables())
 		{
 			const std::string& name = obj->GetFileName();
+			//sprintf(s, "\tOBJECT[%i]: %s\n", pCount, name.c_str());
+			//OutputDebugString(s);
+
+			if (skip.find(name) != skip.end())
+			{
+				sprintf(s, "EQUAL END: %s\n", name.c_str());
+				OutputDebugString(s);
+				continue;
+			}
 
 			auto modelIter = m_models.find(name);
 			if (modelIter == m_models.end())
+			{
+				//sprintf(s, "MODEL ISSUE: GROUP[%i][%i]: %s\n", gCount, pCount, name.c_str());
+				//OutputDebugString(s);
 				continue;
+			}
 
 			const auto& model = modelIter->second;
+			CustomModel cm(model, name);
+			cm.writeToFile();
 			for (const auto& poly : model->polys)
 			{
-				if (!poly.vis)
-					continue;
+				//if (!poly.vis)
+				//{
+				//	sprintf(s, "POLY VIS ISSUE: GROUP[%i][%i]: %s\n", gCount, pCount, name.c_str());
+				//	OutputDebugString(s);
+				//	continue;
+				//}
+
+				/*
+				sprintf(s, "[%i][%i] POLY: vis:%s v1(%f, %f, %f)\tv2(%f, %f, %f)\tv3(%f, %f, %f)\n", gCount, pCount, poly.vis ? "true" : "false",
+					model->verts[poly.v1].x, model->verts[poly.v1].y, model->verts[poly.v1].z,
+					model->verts[poly.v2].x, model->verts[poly.v2].y, model->verts[poly.v2].z,
+					model->verts[poly.v3].x, model->verts[poly.v3].y, model->verts[poly.v3].z
+					);
+				OutputDebugString(s);
+				*/
 
 				glm::vec3 v_[3];
 				for (int i = 0; i < 3; i++)
@@ -360,7 +403,9 @@ bool MapGeometryLoader::load()
 
 				AddTriangle(v_[0], v_[1], v_[2]);
 			}
+			pCount++;
 		}
+		gCount++;
 	}
 
 	//const auto& non_collide_indices = map.GetNonCollideIndices();
