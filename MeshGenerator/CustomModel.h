@@ -2,7 +2,6 @@
 
 #include "EQConfig.h"
 #include "ModelEntry.h"
-
 #include <memory>
 
 
